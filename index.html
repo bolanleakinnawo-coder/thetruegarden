@@ -19,6 +19,43 @@
       rel="stylesheet"
     />
 
+    <!-- Meta Pixel Code -->
+    <script>
+      !(function (f, b, e, v, n, t, s) {
+        if (f.fbq) return;
+        n = f.fbq = function () {
+          n.callMethod
+            ? n.callMethod.apply(n, arguments)
+            : n.queue.push(arguments);
+        };
+        if (!f._fbq) f._fbq = n;
+        n.push = n;
+        n.loaded = !0;
+        n.version = "2.0";
+        n.queue = [];
+        t = b.createElement(e);
+        t.async = !0;
+        t.src = v;
+        s = b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t, s);
+      })(
+        window,
+        document,
+        "script",
+        "https://connect.facebook.net/en_US/fbevents.js",
+      );
+      fbq("init", "988747650919174");
+      fbq("track", "PageView");
+    </script>
+    <noscript
+      ><img
+        height="1"
+        width="1"
+        style="display: none"
+        src="https://www.facebook.com/tr?id=988747650919174&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
+
     <link rel="stylesheet" href="style.css" />
   </head>
 
@@ -216,18 +253,6 @@
         </div>
 
         <!-- DEPOSIT CARD -->
-
-        <div class="deposit-card">
-          <div class="deposit-icon">₦</div>
-
-          <div class="deposit-content">
-            <span>SECURE YOUR PLACE</span>
-
-            <strong> Minimum ₦1M deposit </strong>
-
-            <p>Secure your place on the December 2026 Umrah journey.</p>
-          </div>
-        </div>
 
         <!-- REASONS -->
 
@@ -802,7 +827,29 @@
           </div>
         </div>
 
-        <form class="umrah-form-card">
+        <form class="umrah-form-card" id="umrahForm">
+          <input type="hidden" name="access_key" value="YOUR_ACCESS_KEY_HERE" />
+
+          <input
+            type="hidden"
+            name="subject"
+            value="New December 2026 Umrah Application"
+          />
+
+          <input
+            type="hidden"
+            name="from_name"
+            value="True Gardens Travels Website"
+          />
+
+          <input
+            type="checkbox"
+            name="botcheck"
+            style="display: none"
+            tabindex="-1"
+            autocomplete="off"
+          />
+
           <div class="form-grid">
             <div class="form-group">
               <label for="full-name">Full Name</label>
@@ -891,23 +938,75 @@
               </select>
             </div>
 
+            <!-- Departure State -->
             <div class="form-group full-width">
-              <label for="hajj"> Are you also planning for Hajj? </label>
-              <select id="hajj" name="hajj" required>
-                <option value="" selected disabled>Select</option>
-                <option value="yes">Yes</option>
-                <option value="no">No</option>
-                <option value="interested">
-                  Interested but haven't decided
+              <label for="departure-state">
+                Which state would you like to depart from?
+              </label>
+
+              <p class="form-help">
+                Please select the city that is most convenient for you.
+              </p>
+
+              <select id="departure-state" name="departureState" required>
+                <option value="" selected disabled>
+                  Select departure city
+                </option>
+                <option value="abuja">Abuja</option>
+                <option value="kano">Kano</option>
+                <option value="lagos">Lagos</option>
+              </select>
+            </div>
+
+            <!-- Umrah Budget -->
+            <div class="form-group full-width">
+              <label for="umrah-budget">
+                Approximately how much have you budgeted or saved towards your
+                Umrah journey?
+              </label>
+
+              <p class="form-help">
+                This helps us recommend the most suitable Umrah package for you.
+              </p>
+
+              <select id="umrah-budget" name="umrahBudget" required>
+                <option value="" selected disabled>Select your budget</option>
+                <option value="below-1.5m">Less than ₦1,500,000</option>
+                <option value="1.5m-2.5m">₦1,500,000 – ₦2,500,000</option>
+                <option value="2.5m-3.5m">₦2,500,000 – ₦3,500,000</option>
+                <option value="above-3.5m">Above ₦3,500,000</option>
+                <option value="prefer-not-to-say">Prefer not to say</option>
+              </select>
+            </div>
+
+            <!-- Package Type -->
+            <div class="form-group full-width">
+              <label for="package-type">
+                Which type of package are you interested in?
+              </label>
+
+              <p class="form-help">
+                Please select the option that best matches your preference.
+              </p>
+
+              <select id="package-type" name="packageType" required>
+                <option value="" selected disabled>Select a package</option>
+                <option value="economy">Economy Package</option>
+                <option value="luxury">Luxury Package</option>
+                <option value="premium">Premium Package</option>
+                <option value="5-star-only">
+                  Accommodation in 5-Star Hotels Only
                 </option>
               </select>
             </div>
           </div>
 
-          <button type="submit" class="form-submit">
-            SECURE MY UMRAH SPOT
-            <span>→</span>
+          <button type="submit" class="form-submit" id="formSubmitButton">
+            <span id="submitText">SECURE MY UMRAH SPOT</span>
+            <span id="submitArrow">→</span>
           </button>
+
+          <div class="form-result" id="formResult" aria-live="polite"></div>
 
           <p class="form-privacy">
             Your information is kept private and only used to contact you about
@@ -1382,77 +1481,66 @@
 
     <script src="script.js"></script>
     <script>
-  const urgencyModal = document.getElementById("urgencyModal");
-  const closeUrgencyModal =
-    document.getElementById("closeUrgencyModal");
-  const dismissUrgencyModal =
-    document.getElementById("dismissUrgencyModal");
-  const urgencyModalCta =
-    document.getElementById("urgencyModalCta");
+      const urgencyModal = document.getElementById("urgencyModal");
+      const closeUrgencyModal = document.getElementById("closeUrgencyModal");
+      const dismissUrgencyModal = document.getElementById(
+        "dismissUrgencyModal",
+      );
+      const urgencyModalCta = document.getElementById("urgencyModalCta");
 
-  function openUrgencyModal() {
-    urgencyModal.classList.add("active");
-    document.body.style.overflow = "hidden";
-  }
+      function openUrgencyModal() {
+        urgencyModal.classList.add("active");
+        document.body.style.overflow = "hidden";
+      }
 
-  function closeUrgencyPopup() {
-    urgencyModal.classList.remove("active");
-    document.body.style.overflow = "";
-    sessionStorage.setItem("umrahPopupShown", "true");
-  }
+      function closeUrgencyPopup() {
+        urgencyModal.classList.remove("active");
+        document.body.style.overflow = "";
+        sessionStorage.setItem("umrahPopupShown", "true");
+      }
 
+      /* Show after 4 seconds */
+      setTimeout(() => {
+        const alreadyShown = sessionStorage.getItem("umrahPopupShown");
 
-  /* Show after 4 seconds */
-  setTimeout(() => {
+        if (!alreadyShown) {
+          openUrgencyModal();
+        }
+      }, 4000);
 
-    const alreadyShown =
-      sessionStorage.getItem("umrahPopupShown");
+      closeUrgencyModal.addEventListener("click", closeUrgencyPopup);
 
-    if (!alreadyShown) {
-      openUrgencyModal();
-    }
+      dismissUrgencyModal.addEventListener("click", closeUrgencyPopup);
 
-  }, 4000);
+      urgencyModalCta.addEventListener("click", () => {
+        closeUrgencyPopup();
+      });
 
+      /* Close when clicking outside the card */
+      urgencyModal.addEventListener("click", (event) => {
+        if (event.target === urgencyModal) {
+          closeUrgencyPopup();
+        }
+      });
 
-  closeUrgencyModal.addEventListener(
-    "click",
-    closeUrgencyPopup
-  );
+      /* Close with Escape */
+      document.addEventListener("keydown", (event) => {
+        if (
+          event.key === "Escape" &&
+          urgencyModal.classList.contains("active")
+        ) {
+          closeUrgencyPopup();
+        }
+      });
+    </script>
+    <script>
+      document
+        .getElementById("umrahForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
 
-  dismissUrgencyModal.addEventListener(
-    "click",
-    closeUrgencyPopup
-  );
-
-
-  urgencyModalCta.addEventListener("click", () => {
-    closeUrgencyPopup();
-  });
-
-
-  /* Close when clicking outside the card */
-  urgencyModal.addEventListener("click", (event) => {
-
-    if (event.target === urgencyModal) {
-      closeUrgencyPopup();
-    }
-
-  });
-
-
-  /* Close with Escape */
-  document.addEventListener("keydown", (event) => {
-
-    if (
-      event.key === "Escape" &&
-      urgencyModal.classList.contains("active")
-    ) {
-      closeUrgencyPopup();
-    }
-
-  });
-</script>
-
+          window.location.href = "https://wa.link/op9yo2";
+        });
+    </script>
   </body>
 </html>

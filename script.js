@@ -15,145 +15,196 @@ document.querySelectorAll(".nav-links a").forEach((link) => {
   });
 });
 
+const faqItems = document.querySelectorAll(".faq-item");
 
-  const faqItems = document.querySelectorAll(".faq-item");
+faqItems.forEach((item) => {
+  const button = item.querySelector(".faq-question");
+  const icon = button.querySelector("strong");
 
-  faqItems.forEach((item) => {
-    const button = item.querySelector(".faq-question");
-    const icon = button.querySelector("strong");
+  button.addEventListener("click", () => {
+    const isOpen = item.classList.contains("active");
 
-    button.addEventListener("click", () => {
-      const isOpen = item.classList.contains("active");
-
-      // Close all FAQ items
-      faqItems.forEach((otherItem) => {
-        otherItem.classList.remove("active");
-        otherItem.querySelector(".faq-question strong").textContent = "+";
-      });
-
-      // Open clicked item
-      if (!isOpen) {
-        item.classList.add("active");
-        icon.textContent = "−";
-      }
+    // Close all FAQ items
+    faqItems.forEach((otherItem) => {
+      otherItem.classList.remove("active");
+      otherItem.querySelector(".faq-question strong").textContent = "+";
     });
-  });
 
-  const testimonialTrack = document.querySelector(".testimonial-track");
-  const testimonialCards = document.querySelectorAll(".video-testimonial");
-  const testimonialPrev = document.querySelector(".testimonial-prev");
-  const testimonialNext = document.querySelector(".testimonial-next");
-  const testimonialDots = document.querySelectorAll(".testimonial-dot");
-
-  let testimonialIndex = 0;
-
-  function getVisibleCards() {
-    if (window.innerWidth <= 850) return 1;
-    if (window.innerWidth <= 1000) return 2;
-    return 3;
-  }
-
-  function updateTestimonials() {
-    const visibleCards = getVisibleCards();
-    const maxIndex = Math.max(
-      0,
-      testimonialCards.length - visibleCards
-    );
-
-    testimonialIndex = Math.min(testimonialIndex, maxIndex);
-
-    const cardWidth = testimonialCards[0].offsetWidth;
-    const gap = 20;
-
-    testimonialTrack.style.transform =
-      `translateX(-${testimonialIndex * (cardWidth + gap)}px)`;
-
-    testimonialDots.forEach((dot, index) => {
-      dot.classList.toggle(
-        "active",
-        index === testimonialIndex
-      );
-    });
-  }
-
-
-  testimonialNext.addEventListener("click", () => {
-    const visibleCards = getVisibleCards();
-    const maxIndex = Math.max(
-      0,
-      testimonialCards.length - visibleCards
-    );
-
-    if (testimonialIndex < maxIndex) {
-      testimonialIndex++;
-      updateTestimonials();
+    // Open clicked item
+    if (!isOpen) {
+      item.classList.add("active");
+      icon.textContent = "−";
     }
   });
+});
 
+const testimonialTrack = document.querySelector(".testimonial-track");
+const testimonialCards = document.querySelectorAll(".video-testimonial");
+const testimonialPrev = document.querySelector(".testimonial-prev");
+const testimonialNext = document.querySelector(".testimonial-next");
+const testimonialDots = document.querySelectorAll(".testimonial-dot");
 
-  testimonialPrev.addEventListener("click", () => {
-    if (testimonialIndex > 0) {
-      testimonialIndex--;
-      updateTestimonials();
-    }
-  });
+let testimonialIndex = 0;
 
+function getVisibleCards() {
+  if (window.innerWidth <= 850) return 1;
+  if (window.innerWidth <= 1000) return 2;
+  return 3;
+}
+
+function updateTestimonials() {
+  const visibleCards = getVisibleCards();
+  const maxIndex = Math.max(0, testimonialCards.length - visibleCards);
+
+  testimonialIndex = Math.min(testimonialIndex, maxIndex);
+
+  const cardWidth = testimonialCards[0].offsetWidth;
+  const gap = 20;
+
+  testimonialTrack.style.transform = `translateX(-${testimonialIndex * (cardWidth + gap)}px)`;
 
   testimonialDots.forEach((dot, index) => {
-    dot.addEventListener("click", () => {
-      testimonialIndex = index;
-      updateTestimonials();
-    });
+    dot.classList.toggle("active", index === testimonialIndex);
   });
+}
 
+testimonialNext.addEventListener("click", () => {
+  const visibleCards = getVisibleCards();
+  const maxIndex = Math.max(0, testimonialCards.length - visibleCards);
 
-  window.addEventListener("resize", updateTestimonials);
+  if (testimonialIndex < maxIndex) {
+    testimonialIndex++;
+    updateTestimonials();
+  }
+});
 
+testimonialPrev.addEventListener("click", () => {
+  if (testimonialIndex > 0) {
+    testimonialIndex--;
+    updateTestimonials();
+  }
+});
 
-  /* MOBILE SWIPE */
+testimonialDots.forEach((dot, index) => {
+  dot.addEventListener("click", () => {
+    testimonialIndex = index;
+    updateTestimonials();
+  });
+});
 
-  let touchStartX = 0;
-  let touchEndX = 0;
+window.addEventListener("resize", updateTestimonials);
 
-  const testimonialWrapper = document.querySelector(
-    ".testimonial-track-wrapper"
-  );
+/* MOBILE SWIPE */
 
-  testimonialWrapper.addEventListener(
-    "touchstart",
-    (event) => {
-      touchStartX = event.changedTouches[0].screenX;
-    },
-    { passive: true }
-  );
+let touchStartX = 0;
+let touchEndX = 0;
 
-  testimonialWrapper.addEventListener(
-    "touchend",
-    (event) => {
-      touchEndX = event.changedTouches[0].screenX;
+const testimonialWrapper = document.querySelector(".testimonial-track-wrapper");
 
-      const swipeDistance = touchStartX - touchEndX;
+testimonialWrapper.addEventListener(
+  "touchstart",
+  (event) => {
+    touchStartX = event.changedTouches[0].screenX;
+  },
+  { passive: true },
+);
 
-      if (Math.abs(swipeDistance) < 50) return;
+testimonialWrapper.addEventListener(
+  "touchend",
+  (event) => {
+    touchEndX = event.changedTouches[0].screenX;
 
-      const visibleCards = getVisibleCards();
-      const maxIndex = Math.max(
-        0,
-        testimonialCards.length - visibleCards
-      );
+    const swipeDistance = touchStartX - touchEndX;
 
-      if (swipeDistance > 0 && testimonialIndex < maxIndex) {
-        testimonialIndex++;
-      }
+    if (Math.abs(swipeDistance) < 50) return;
 
-      if (swipeDistance < 0 && testimonialIndex > 0) {
-        testimonialIndex--;
-      }
+    const visibleCards = getVisibleCards();
+    const maxIndex = Math.max(0, testimonialCards.length - visibleCards);
 
-      updateTestimonials();
-    },
-    { passive: true }
-  );
+    if (swipeDistance > 0 && testimonialIndex < maxIndex) {
+      testimonialIndex++;
+    }
 
+    if (swipeDistance < 0 && testimonialIndex > 0) {
+      testimonialIndex--;
+    }
+
+    updateTestimonials();
+  },
+  { passive: true },
+);
 
 updateTestimonials();
+
+const umrahForm = document.getElementById("umrahForm");
+const formResult = document.getElementById("formResult");
+const formSubmitButton = document.getElementById("formSubmitButton");
+const submitText = document.getElementById("submitText");
+const submitArrow = document.getElementById("submitArrow");
+
+umrahForm.addEventListener("submit", async function (event) {
+  event.preventDefault();
+
+  formResult.className = "form-result";
+  formResult.textContent = "";
+
+  if (!umrahForm.checkValidity()) {
+    umrahForm.reportValidity();
+    return;
+  }
+
+  formSubmitButton.disabled = true;
+
+  submitText.textContent = "SENDING...";
+  submitArrow.textContent = "•";
+
+  const formData = new FormData(umrahForm);
+
+  try {
+    const response = await fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      body: formData,
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    const result = await response.json();
+
+    if (response.ok && result.success) {
+      formResult.className = "form-result success";
+
+      formResult.innerHTML = `
+        <strong>Application received!</strong><br>
+        Thank you for your interest in the December 2026 Umrah.
+        The True Gardens Travels team will contact you with the next steps.
+      `;
+
+      umrahForm.reset();
+
+      submitText.textContent = "APPLICATION SENT";
+      submitArrow.textContent = "✓";
+
+      setTimeout(() => {
+        submitText.textContent = "SECURE MY UMRAH SPOT";
+        submitArrow.textContent = "→";
+      }, 5000);
+    } else {
+      throw new Error(result.message || "Something went wrong.");
+    }
+  } catch (error) {
+    console.error(error);
+
+    formResult.className = "form-result error";
+
+    formResult.innerHTML = `
+      <strong>Unable to submit application.</strong><br>
+      Please try again or contact True Gardens Travels directly.
+    `;
+
+    submitText.textContent = "TRY AGAIN";
+    submitArrow.textContent = "→";
+  } finally {
+    formSubmitButton.disabled = false;
+  }
+});

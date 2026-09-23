@@ -5831,3 +5831,32 @@ SMALL MOBILE
     font-size: 11.5px;
   }
 }
+
+.form-result {
+  display: none;
+  margin-top: 18px;
+  padding: 14px 16px;
+  border-radius: 6px;
+  font-family: "Poppins", sans-serif;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.form-result.success {
+  display: block;
+  background: #edf8f1;
+  border: 1px solid #ccebd7;
+  color: #247044;
+}
+
+.form-result.error {
+  display: block;
+  background: #fff1f1;
+  border: 1px solid #f1cccc;
+  color: #a33a3a;
+}
+
+.form-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
