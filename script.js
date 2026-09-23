@@ -136,75 +136,92 @@ testimonialWrapper.addEventListener(
 
 updateTestimonials();
 
-const umrahForm = document.getElementById("umrahForm");
-const formResult = document.getElementById("formResult");
-const formSubmitButton = document.getElementById("formSubmitButton");
-const submitText = document.getElementById("submitText");
-const submitArrow = document.getElementById("submitArrow");
 
-umrahForm.addEventListener("submit", async function (event) {
-  event.preventDefault();
+  const umrahForm = document.getElementById("umrahForm");
+  const formResult = document.getElementById("formResult");
+  const formSubmitButton = document.getElementById("formSubmitButton");
+  const submitText = document.getElementById("submitText");
+  const submitArrow = document.getElementById("submitArrow");
 
-  formResult.className = "form-result";
-  formResult.textContent = "";
+  const GOOGLE_SCRIPT_URL = "";
 
-  if (!umrahForm.checkValidity()) {
-    umrahForm.reportValidity();
-    return;
-  }
+  umrahForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
 
-  formSubmitButton.disabled = true;
+    // Check required fields
+    if (!umrahForm.checkValidity()) {
+      umrahForm.reportValidity();
+      return;
+    }
 
-  submitText.textContent = "SENDING...";
-  submitArrow.textContent = "•";
+    // Disable button while submitting
+    formSubmitButton.disabled = true;
+    submitText.textContent = "SENDING...";
+    submitArrow.textContent = "•";
 
-  const formData = new FormData(umrahForm);
+    formResult.className = "form-result";
+    formResult.textContent = "";
 
-  try {
-    const response = await fetch("https://api.web3forms.com/submit", {
-      method: "POST",
-      body: formData,
-      headers: {
-        Accept: "application/json",
-      },
-    });
+    // Collect form data
+    const formData = new FormData(umrahForm);
 
-    const result = await response.json();
+    const data = {
+      fullName: formData.get("fullName"),
+      whatsapp: formData.get("whatsapp"),
+      email: formData.get("email"),
+      package: formData.get("package"),
+      departure: formData.get("departure"),
+      travelPreference: formData.get("travelPreference"),
+      deposit: formData.get("deposit"),
+      departureState: formData.get("departureState"),
+      umrahBudget: formData.get("umrahBudget"),
+      packageType: formData.get("packageType")
+    };
 
-    if (response.ok && result.success) {
+    try {
+      const response = await fetch(GOOGLE_SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8"
+        }
+      });
+
+      // Google Apps Script may not return a normal CORS response,
+      // so we don't rely on response.json() here.
+      
       formResult.className = "form-result success";
 
       formResult.innerHTML = `
         <strong>Application received!</strong><br>
         Thank you for your interest in the December 2026 Umrah.
-        The True Gardens Travels team will contact you with the next steps.
+        Taking you to WhatsApp...
       `;
 
+      // Reset the form
       umrahForm.reset();
 
       submitText.textContent = "APPLICATION SENT";
       submitArrow.textContent = "✓";
 
+      // Give Google Sheet a moment before redirecting
       setTimeout(() => {
-        submitText.textContent = "SECURE MY UMRAH SPOT";
-        submitArrow.textContent = "→";
-      }, 5000);
-    } else {
-      throw new Error(result.message || "Something went wrong.");
+        window.location.href = "https://wa.link/op9yo2";
+      }, 1000);
+
+    } catch (error) {
+      console.error("Submission error:", error);
+
+      formResult.className = "form-result error";
+
+      formResult.innerHTML = `
+        <strong>Unable to submit application.</strong><br>
+        Please try again or contact True Gardens Travels directly.
+      `;
+
+      submitText.textContent = "TRY AGAIN";
+      submitArrow.textContent = "→";
+
+      formSubmitButton.disabled = false;
     }
-  } catch (error) {
-    console.error(error);
-
-    formResult.className = "form-result error";
-
-    formResult.innerHTML = `
-      <strong>Unable to submit application.</strong><br>
-      Please try again or contact True Gardens Travels directly.
-    `;
-
-    submitText.textContent = "TRY AGAIN";
-    submitArrow.textContent = "→";
-  } finally {
-    formSubmitButton.disabled = false;
-  }
-});
+  });
