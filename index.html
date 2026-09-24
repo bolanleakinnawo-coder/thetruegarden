@@ -872,9 +872,71 @@
               </select>
             </div>
 
-      
-  
+            <div class="form-group full-width">
+              <label for="umrah-budget">
+                Approximately how much have you budgeted or saved towards your
+                Umrah journey?
+              </label>
+
+              <p class="form-help">
+                This helps us recommend the most suitable Umrah package for you.
+              </p>
+
+              <select id="umrah-budget" name="umrahBudget" required>
+                <option value="" selected disabled>Select your budget</option>
+                <option value="below-1.5m">Less than ₦1,500,000</option>
+                <option value="1.5m-2.5m">₦1,500,000 – ₦2,500,000</option>
+                <option value="2.5m-3.5m">₦2,500,000 – ₦3,500,000</option>
+                <option value="above-3.5m">Above ₦3,500,000</option>
+              </select>
+            </div>
+
+            <!-- Departure State -->
+            <div class="form-group full-width">
+              <label for="departure-state">
+                Which state would you like to depart from?
+              </label>
+
+              <p class="form-help">
+                Please select the city that is most convenient for you.
+              </p>
+
+              <select id="departure-state" name="departureState" required>
+                <option value="" selected disabled>
+                  Select departure city
+                </option>
+                <option value="abuja">Abuja</option>
+                <option value="kano">Kano</option>
+                <option value="lagos">Lagos</option>
+              </select>
+            </div>
+
+            <!-- schedule -->
+            <div class="form-group full-width">
+              <label for="travel-preference">
+                Do you have a preferred month of travel due to your schedule?
+              </label>
+
+              <select id="travel-preference" name="travelPreference" required>
+                <option value="" selected disabled>Select an option</option>
+                <option value="flexible">
+                  No, I'm okay with the December Umrah
+                </option>
+                <option value="preferred">Yes, I have a preferred date</option>
+              </select>
+            </div>
+
+            <div class="form-group full-width" id="preferred-date-group" hidden>
+              <label for="preferred-date">What is your preferred date?</label>
+              <input
+                type="text"
+                id="preferred-date"
+                name="preferredDate"
+                placeholder="e.g. 15 December or early January"
+              />
+            </div>
           </div>
+
           <button type="submit" class="form-submit" id="formSubmitButton">
             <span id="submitText">SECURE MY UMRAH SPOT</span>
             <span id="submitArrow">→</span>

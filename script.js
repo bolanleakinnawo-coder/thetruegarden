@@ -141,7 +141,18 @@ const formResult = document.getElementById("formResult");
 const formSubmitButton = document.getElementById("formSubmitButton");
 const submitText = document.getElementById("submitText");
 const submitArrow = document.getElementById("submitArrow");
+const travelPreference = document.getElementById("travel-preference");
+const preferredDateGroup = document.getElementById("preferred-date-group");
+const preferredDate = document.getElementById("preferred-date");
 
+function togglePreferredDate() {
+  const wantsDate = travelPreference.value === "preferred";
+  preferredDateGroup.hidden = !wantsDate;
+  preferredDate.required = wantsDate;
+  if (!wantsDate) preferredDate.value = "";
+}
+
+travelPreference.addEventListener("change", togglePreferredDate);
 const GOOGLE_SCRIPT_URL =
   "https://script.google.com/macros/s/AKfycbzJXjR_Xg96swjffWWRxiN-GGFrRSvOBS6l5AmPMcO-vi2gW5LuRi2inLaKUM5OPn-nIQ/exec";
 
@@ -176,6 +187,8 @@ umrahForm.addEventListener("submit", async function (event) {
     departureState: formData.get("departureState"),
     umrahBudget: formData.get("umrahBudget"),
     packageType: formData.get("packageType"),
+    travelPreference: formData.get("travelPreference"),
+    preferredDate: formData.get("preferredDate") || "",
   };
 
   try {
@@ -200,6 +213,7 @@ umrahForm.addEventListener("submit", async function (event) {
   `;
 
     umrahForm.reset();
+    togglePreferredDate();
     submitText.textContent = "APPLICATION SENT";
     submitArrow.textContent = "✓";
 

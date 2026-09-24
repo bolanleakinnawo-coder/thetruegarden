@@ -5860,3 +5860,7 @@ SMALL MOBILE
   opacity: 0.7;
   cursor: not-allowed;
 }
+
+[hidden] {
+  display: none !important;
+}
