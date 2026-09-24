@@ -4130,7 +4130,7 @@ a {
   background: #fafaf8;
   color: var(--blue-dark);
   font-family: "Poppins", sans-serif;
-  font-size: 1px;
+  font-size: 16px;
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease,
