@@ -136,92 +136,89 @@ testimonialWrapper.addEventListener(
 
 updateTestimonials();
 
+const umrahForm = document.getElementById("umrahForm");
+const formResult = document.getElementById("formResult");
+const formSubmitButton = document.getElementById("formSubmitButton");
+const submitText = document.getElementById("submitText");
+const submitArrow = document.getElementById("submitArrow");
 
-  const umrahForm = document.getElementById("umrahForm");
-  const formResult = document.getElementById("formResult");
-  const formSubmitButton = document.getElementById("formSubmitButton");
-  const submitText = document.getElementById("submitText");
-  const submitArrow = document.getElementById("submitArrow");
+const GOOGLE_SCRIPT_URL =
+  "https://script.google.com/macros/s/AKfycbzJXjR_Xg96swjffWWRxiN-GGFrRSvOBS6l5AmPMcO-vi2gW5LuRi2inLaKUM5OPn-nIQ/exec";
 
-  const GOOGLE_SCRIPT_URL = "";
+umrahForm.addEventListener("submit", async function (event) {
+  event.preventDefault();
 
-  umrahForm.addEventListener("submit", async function (event) {
-    event.preventDefault();
+  // Check required fields
+  if (!umrahForm.checkValidity()) {
+    umrahForm.reportValidity();
+    return;
+  }
 
-    // Check required fields
-    if (!umrahForm.checkValidity()) {
-      umrahForm.reportValidity();
-      return;
+  // Disable button while submitting
+  formSubmitButton.disabled = true;
+  submitText.textContent = "SENDING...";
+  submitArrow.textContent = "•";
+
+  formResult.className = "form-result";
+  formResult.textContent = "";
+
+  // Collect form data
+  const formData = new FormData(umrahForm);
+
+  const data = {
+    fullName: formData.get("fullName"),
+    whatsapp: formData.get("whatsapp"),
+    email: formData.get("email"),
+    package: formData.get("package"),
+    departure: formData.get("departure"),
+    travelPreference: formData.get("travelPreference"),
+    deposit: formData.get("deposit"),
+    departureState: formData.get("departureState"),
+    umrahBudget: formData.get("umrahBudget"),
+    packageType: formData.get("packageType"),
+  };
+
+  try {
+    const response = await fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+    });
+
+    const result = await response.json();
+    if (result.result !== "success") {
+      throw new Error(result.message || "Submission failed");
     }
 
-    // Disable button while submitting
-    formSubmitButton.disabled = true;
-    submitText.textContent = "SENDING...";
-    submitArrow.textContent = "•";
+    if (typeof fbq === "function") fbq("track", "Lead"); // handy for your Meta ads
 
-    formResult.className = "form-result";
-    formResult.textContent = "";
+    formResult.className = "form-result success";
+    formResult.innerHTML = `
+    <strong>Application received!</strong><br>
+    Thank you for your interest in the December 2026 Umrah.
+    Taking you to WhatsApp...
+  `;
 
-    // Collect form data
-    const formData = new FormData(umrahForm);
+    umrahForm.reset();
+    submitText.textContent = "APPLICATION SENT";
+    submitArrow.textContent = "✓";
 
-    const data = {
-      fullName: formData.get("fullName"),
-      whatsapp: formData.get("whatsapp"),
-      email: formData.get("email"),
-      package: formData.get("package"),
-      departure: formData.get("departure"),
-      travelPreference: formData.get("travelPreference"),
-      deposit: formData.get("deposit"),
-      departureState: formData.get("departureState"),
-      umrahBudget: formData.get("umrahBudget"),
-      packageType: formData.get("packageType")
-    };
+    setTimeout(() => {
+      window.location.href = "https://wa.link/op9yo2";
+    }, 1000);
+  } catch (error) {
+    console.error("Submission error:", error);
 
-    try {
-      const response = await fetch(GOOGLE_SCRIPT_URL, {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: {
-          "Content-Type": "text/plain;charset=utf-8"
-        }
-      });
+    formResult.className = "form-result error";
 
-      // Google Apps Script may not return a normal CORS response,
-      // so we don't rely on response.json() here.
-      
-      formResult.className = "form-result success";
-
-      formResult.innerHTML = `
-        <strong>Application received!</strong><br>
-        Thank you for your interest in the December 2026 Umrah.
-        Taking you to WhatsApp...
-      `;
-
-      // Reset the form
-      umrahForm.reset();
-
-      submitText.textContent = "APPLICATION SENT";
-      submitArrow.textContent = "✓";
-
-      // Give Google Sheet a moment before redirecting
-      setTimeout(() => {
-        window.location.href = "https://wa.link/op9yo2";
-      }, 1000);
-
-    } catch (error) {
-      console.error("Submission error:", error);
-
-      formResult.className = "form-result error";
-
-      formResult.innerHTML = `
+    formResult.innerHTML = `
         <strong>Unable to submit application.</strong><br>
         Please try again or contact True Gardens Travels directly.
       `;
 
-      submitText.textContent = "TRY AGAIN";
-      submitArrow.textContent = "→";
+    submitText.textContent = "TRY AGAIN";
+    submitArrow.textContent = "→";
 
-      formSubmitButton.disabled = false;
-    }
-  });
+    formSubmitButton.disabled = false;
+  }
+});
