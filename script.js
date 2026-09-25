@@ -153,6 +153,7 @@ function togglePreferredDate() {
 }
 
 travelPreference.addEventListener("change", togglePreferredDate);
+
 const GOOGLE_SCRIPT_URL =
   "https://script.google.com/macros/s/AKfycbzJXjR_Xg96swjffWWRxiN-GGFrRSvOBS6l5AmPMcO-vi2gW5LuRi2inLaKUM5OPn-nIQ/exec";
 
@@ -181,12 +182,8 @@ umrahForm.addEventListener("submit", async function (event) {
     whatsapp: formData.get("whatsapp"),
     email: formData.get("email"),
     package: formData.get("package"),
-    departure: formData.get("departure"),
-    travelPreference: formData.get("travelPreference"),
-    deposit: formData.get("deposit"),
-    departureState: formData.get("departureState"),
     umrahBudget: formData.get("umrahBudget"),
-    packageType: formData.get("packageType"),
+    departureState: formData.get("departureState"),
     travelPreference: formData.get("travelPreference"),
     preferredDate: formData.get("preferredDate") || "",
   };
